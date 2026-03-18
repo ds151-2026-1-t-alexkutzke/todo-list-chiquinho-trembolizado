@@ -2,15 +2,15 @@ import { useState } from "react";
 import { TextInput, View, Text, StyleSheet, FlatList } from "react-native";
 import Tarefa from "./Tarefa";
 import React from "react";
+import {Tarefas} from "./Tarefa";
 
-interface Tarefa {
-  id: string;
-  text: string;
-}
+
+
 
 const TextScreen = () => {
   const [text, setText] = useState("");
-  const [tasks, setTasks] = useState<Tarefa[]>([]);
+  const [tasks, setTasks] = useState<Tarefas[]>([]);
+
   return (
     <View>
       <TextInput
@@ -18,8 +18,9 @@ const TextScreen = () => {
         placeholder="Digite uma tarefa"
         onChangeText={setText}
         onEndEditing={() => {
-          setTasks([...tasks, { id: Date.now().toString(), text }]);
+          setTasks([...tasks, { id: Date.now().toString(), text, check: false }]);
           setText("");
+          console.log(tasks);
         }}
         autoCapitalize="none"
         autoCorrect={false}
@@ -27,8 +28,18 @@ const TextScreen = () => {
       />
       <FlatList
         data={tasks}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <Tarefa text={item.text} />}
+        keyExtractor={(item: Tarefas) => item.id}
+        renderItem={({item}) => {
+          return(
+          <Tarefa tarefa={item} AsChecked={(id:string) => {
+            const newTasks = tasks.map((tarefa) =>  
+            tarefa.id === id ? { ...tarefa, check: !tarefa.check} : tarefa); 
+            
+        setTasks(newTasks);
+          }}  />
+          )
+        }}
+    
       />
     </View>
   );
